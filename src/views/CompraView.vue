@@ -6,6 +6,8 @@
       </div>
       <button @click="cerrarSesion" class="botonCerrarSesion">Cerrar sesión</button>
     </nav>
+
+    <h3>Pedir cotización de las criptomonedas</h3>
   </div>
 
   <hr>
