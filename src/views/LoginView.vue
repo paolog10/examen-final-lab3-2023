@@ -44,8 +44,8 @@
           localStorage.setItem('idUsuario', this.idUsuario)
 
           //me dirige a la pagina de compra de moneda
-          //this.$router.push({name: "CompraView"})
-          console.log(this.idUsuario)
+          this.$router.push({name: "CompraView"})
+          //console.log(this.idUsuario)
         
         } else {
           this.errorIdUsuario = true;
