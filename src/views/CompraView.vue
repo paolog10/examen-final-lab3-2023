@@ -7,18 +7,57 @@
       <button @click="cerrarSesion" class="botonCerrarSesion">Cerrar sesión</button>
     </nav>
 
-    <h3>Pedir cotización de las criptomonedas</h3>
+    <h2>Panel de Criptomonedas</h2>
+    <button @click="obtenerPrecios()" class="botonCerrarSesion">Obtener Precios hoy</button>
+
+    <div class="tablaPreciosCriptomonedas">
+      <table>
+        <thead>
+          <tr>
+            <th>Criptomoneda</th>
+            <th>Precio de compra $ARS</th>
+            <th>Precio de venta $ARS</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(precioCriptomoneda, index) in preciosCriptomonedas" :key="index">
+            <td><img :src="iconosCriptomonedas[index]" alt=""></td> <!--bindeo la imagen en la posicion index-->
+            <td>{{ precioCriptomoneda.ask }}</td>
+            <td>{{ precioCriptomoneda.bid }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div>Aca va el formulario de compra con sus validaciones</div>
+
+
   </div>
 
   <hr>
 </template>
 
 <script>
-  
+  import criptoYaConnectionService from '../services/criptoYaConnectionService';
+
   export default {
+    
     data(){
       return{
         clienteId: localStorage.getItem('idUsuario'), //inicializo el idUsuario del localStorage
+        iconosCriptomonedas: [
+          "https://argenbtc.com/img/iconos/f_bitcoin.svg",
+          "https://argenbtc.com/img/iconos/f_ethereum.svg",
+          "https://argenbtc.com/img/iconos/f_tether.svg",
+          "https://argenbtc.com/img/iconos/f_dai.svg",
+        ],
+        endpointsPrecios: [
+          "/btc/ars/1", 
+          "/eth/ars/1",
+          "/usdt/ars/1", 
+          "/dai/ars/1"
+        ],
+        preciosCriptomonedas: [],
       }
     },
 
@@ -27,6 +66,23 @@
         // redirigir al usuario a la página de inicio de sesión
         this.$router.push({ name: 'LoginView' });
       },
+
+      async obtenerPrecios() {
+        try {
+          
+          for (const endpoint of this.endpointsPrecios) {
+            let response = await criptoYaConnectionService.get(endpoint);
+            //console.log(response.data);
+            this.preciosCriptomonedas.push(response.data) 
+          }
+
+          return this.preciosCriptomonedas;
+        } catch (error) {
+          console.error('Error al obtener los precios de las criptomonedas:', error);
+          return [];
+        }
+      },
+
     },
 
     computed:{
@@ -60,7 +116,7 @@
   cursor: pointer;
 }
 
-.tabla{
+.tablaPreciosCriptomonedas{
   max-width: 600px;
   margin: 0 auto;
 }
