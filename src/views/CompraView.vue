@@ -29,16 +29,40 @@
       </table>
     </div>
 
-    <div>Aca va el formulario de compra con sus validaciones</div>
-
-
   </div>
 
   <hr>
+
+  <h3>Formulario de compra</h3>
+  <div class="formularioCompra">
+    <form @submit.prevent="registrarCompra">
+      <div>
+        <label>Cantidad:</label>
+        <input type="text" id="cantidad" v-model.number="cantidadCompraCriptomoneda" required>
+      </div>
+
+      <div>
+        <label>Criptomoneda:</label>
+        <select id="criptomoneda" required v-model="criptomonedaSeleccionada">
+          <option disabled selected>Selecciona criptomoneda</option>
+          <option value="btc">Bitcoin</option>
+          <option value="eth">Ethereum</option>
+          <option value="usdt">USDT</option>
+          <option value="dai">Dai</option>
+        </select>
+      </div>
+
+      <button type="submit" class="botonCompra">Comprar</button>
+      <p v-if="compraExitosa" class="exito">Compra con éxito.</p>
+    </form>
+
+    <!--<p v-show="numeroValido" class="notaAlPie">Error, verifique! Si desea comprar porción de criptomoneda utilice Ej: 10.05</p>-->
+  </div>
 </template>
 
 <script>
   import criptoYaConnectionService from '../services/criptoYaConnectionService';
+  import utnConnectionService from '@/services/utnConnectionService';
 
   export default {
     
@@ -57,7 +81,11 @@
           "/usdt/ars/1", 
           "/dai/ars/1"
         ],
+        cryptoArrayPosicion: { "btc": 0, "eth": 1, "usdt": 2, "dai": 3 },
         preciosCriptomonedas: [],
+        cantidadCompraCriptomoneda: 0,
+        criptomonedaSeleccionada: "",
+        compraExitosa: false,
       }
     },
 
@@ -81,6 +109,39 @@
           console.error('Error al obtener los precios de las criptomonedas:', error);
           return [];
         }
+      },
+
+      parseoCantidadCompraCriptomoneda(valor){
+        if (/^\d*\.?\d+$/.test(this.cantidadCompraCriptomoneda)) {
+          // Convertir el número a decimal si pasa el test de convertir string en numero
+          this.cantidadCompraCriptomoneda = parseFloat(valor)
+          return this.cantidadCompraCriptomoneda
+        }
+        
+        return console.log('Error')
+      },
+
+      async registrarCompra(){
+        
+        //tengo que crear un objeto con la compra
+        let compraCriptomoneda = {
+          user_id: this.clienteId,
+          action: "purchase",
+          crypto_code: this.criptomonedaSeleccionada,
+          crypto_amount: this.parseoCantidadCompraCriptomoneda(this.cantidadCompraCriptomoneda),
+          //money: precio de compra * cantidad
+          money: (this.preciosCriptomonedas[this.cryptoArrayPosicion[this.criptomonedaSeleccionada]].ask * this.parseoCantidadCompraCriptomoneda(this.cantidadCompraCriptomoneda)).toFixed(2),
+          datetime: new Date().toISOString() //formato iso
+        }
+        
+        //lo envío a la bd con la ruta y el objeto creado
+        try {
+          let response = await utnConnectionService.post('https://laboratorio3-f36a.restdb.io/rest/transactions', compraCriptomoneda)
+          console.log(response)
+          this.compraExitosa = true
+        } catch (error) {
+          console.error('Error al obtener los datos de la API:', error);
+        }        
       },
 
     },
@@ -148,11 +209,6 @@ td {
 
 tr:hover td {
   background: #c8e4c3;
-}
-
-.notaAlPie{
-  color: red;
-  font-weight: bolder;
 }
 
 .formularioCompra {

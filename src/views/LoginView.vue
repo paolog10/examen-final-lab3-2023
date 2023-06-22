@@ -36,9 +36,7 @@
       validarIdUsuario() {
 
         if (this.idUsuario.length === 10 && /^[a-zA-Z0-9]+$/.test(this.idUsuario)) {
-          //alert('Inicio de sesión exitoso');
           this.errorIdUsuario = false;
-          //this.idUsuario = '';
 
           //uso localStorage para guardar un idUsuario
           localStorage.setItem('idUsuario', this.idUsuario)
