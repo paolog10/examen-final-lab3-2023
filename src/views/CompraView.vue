@@ -133,7 +133,7 @@
           money: (this.preciosCriptomonedas[this.cryptoArrayPosicion[this.criptomonedaSeleccionada]].ask * this.parseoCantidadCompraCriptomoneda(this.cantidadCompraCriptomoneda)).toFixed(2),
           datetime: new Date().toISOString() //formato iso
         }
-        
+        console.log(compraCriptomoneda);
         //lo envío a la bd con la ruta y el objeto creado
         try {
           let response = await utnConnectionService.post('https://laboratorio3-f36a.restdb.io/rest/transactions', compraCriptomoneda)
