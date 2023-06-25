@@ -83,7 +83,7 @@
         ],
         cryptoArrayPosicion: { "btc": 0, "eth": 1, "usdt": 2, "dai": 3 },
         preciosCriptomonedas: [],
-        cantidadCompraCriptomoneda: 0,
+        cantidadCompraCriptomoneda: null,
         criptomonedaSeleccionada: "",
         compraExitosa: false,
       }

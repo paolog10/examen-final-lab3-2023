@@ -30,4 +30,13 @@ nav a {
 nav a.router-link-exact-active {
   color: #42b983;
 }
+
+.botonCerrarSesion {
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}
 </style>
