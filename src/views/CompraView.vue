@@ -68,7 +68,8 @@
     
     data(){
       return{
-        clienteId: localStorage.getItem('idUsuario'), //inicializo el idUsuario del localStorage
+        esLoguedo: false,
+        clienteId: null, //localStorage.getItem('idUsuario'), //inicializo el idUsuario del localStorage
         iconosCriptomonedas: [
           "https://argenbtc.com/img/iconos/f_bitcoin.svg",
           "https://argenbtc.com/img/iconos/f_ethereum.svg",
@@ -91,6 +92,9 @@
 
     methods: {
       cerrarSesion() {
+        localStorage.removeItem('idUsuario')
+        this.esLoguedo = false;
+        
         // redirigir al usuario a la página de inicio de sesión
         this.$router.push({ name: 'LoginView' });
       },
@@ -148,11 +152,21 @@
 
     computed:{
       darMensajeBienvenida(){
+        let usuarioId = localStorage.getItem('idUsuario');
+        
         //console.log(this.clienteId)
-        return `Bienvenido ${this.clienteId}!!!`
+        return `Bienvenido ${usuarioId}!!!`
       },
 
     },
+
+    mounted(){
+      let usuarioId = localStorage.getItem('idUsuario');
+
+      if (usuarioId) {
+        this.esLoguedo = true;
+      }
+    }
   }
   
   

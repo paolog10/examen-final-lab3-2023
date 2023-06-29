@@ -3,6 +3,7 @@ import HomeView from '../views/HomeView.vue'
 import LoginView from '../views/LoginView.vue'
 import CompraView from '../views/CompraView.vue'
 import HistorialMovimientosView from '../views/HistorialMovimientosView.vue'
+import PantallaInversionesView from '../views/PantallaInversionesView.vue'
 
 const routes = [
   {
@@ -33,6 +34,11 @@ const routes = [
     path: '/historialMovimientos',
     name: 'HistorialMovimientosView',
     component: HistorialMovimientosView
+  },
+  {
+    path: '/pantallaInversiones',
+    name: 'PantallaInversionesView',
+    component: PantallaInversionesView
   },
 ]
 

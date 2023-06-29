@@ -4,7 +4,8 @@
     <!--<router-link to="/about">About</router-link> |-->
     <router-link to="/login">Login</router-link> |
     <router-link to="/compra">Compra-Venta</router-link> |
-    <router-link to="/historialMovimientos">Historial de Movimientos</router-link>
+    <router-link to="/historialMovimientos">Historial de Movimientos</router-link> |
+    <router-link to="/pantallaInversiones">Pantalla Inversiones</router-link>
   </nav>
   <router-view/>
 </template>

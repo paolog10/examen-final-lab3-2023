@@ -75,7 +75,7 @@
 
           console.log(this.criptomonedasCompradas);
         } catch (error) {
-          console.error('Error al obtener la compra:', error);
+          console.error('Error al obtener datos:', error);
         }
       },
 
@@ -99,7 +99,7 @@
 
           console.log(this.lecturaCompraVentaCriptoMoneda);
         } catch (error) {
-          console.error('Error al obtener la compra:', error);
+          console.error('Error al obtener datos:', error);
         }
       },
     },
