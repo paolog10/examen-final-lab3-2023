@@ -14,20 +14,39 @@
         <tr>
           <th>Criptomoneda</th>
           <th>Cantidad</th>
+          <th>Dinero</th>
         </tr>
       </thead>
       <tbody>
         <tr v-for="(criptomoneda, cantidad ) in mostrarCriptomonedasAgrupadas" :key="criptomoneda">
           <td>{{ criptomoneda }}</td>
-          <td>{{ cantidad }}</td>          
+          <td>{{ cantidad }}</td>      
+          <td>{{ criptomoneda }}</td>    
         </tr>
       </tbody>
     </table>
+  </div>
+
+  <ul v-for="(criptomoneda, precioVenta ) in preciosVentaCriptomonedas" :key="criptomoneda">
+    <li>
+      {{ criptomoneda }}: {{ precioVenta }} 
+    </li>
+  </ul>
+  <button type="button" @click="obtenerPreciosVentaCriptomonedas">PreciosVentaCriptomonedas</button>
+
+  <div>
+    <h2>Precios de Criptomonedas</h2>
+    <ul>
+      <li v-for="item in criptomonedas" :key="item.nombre">
+        {{ item.nombre }} - Precio de venta: {{ item.precioVenta }}
+      </li>
+    </ul>
   </div>
 </template>
 
 <script>
   import utnConnectionService from '../services/utnConnectionService';
+  import criptoYaConnectionService from '../services/criptoYaConnectionService';
   
   export default {
   
@@ -35,6 +54,14 @@
       return {
         clienteId: localStorage.getItem('idUsuario'), 
         criptomonedas: [],
+        endpointsPrecios: [
+          "/btc/ars/1", 
+          "/eth/ars/1",
+          "/usdt/ars/1", 
+          "/dai/ars/1"
+        ],
+        preciosVentaCriptomonedas: [],
+        cryptoArrayPosicion: { "btc": 0, "eth": 1, "usdt": 2, "dai": 3 },
       }
     },
 
@@ -45,7 +72,8 @@
     computed: { //Cómo mostrar datos agrupados?????
       mostrarCriptomonedasAgrupadas() {
         return this.agruparCriptomonedas(this.criptomonedas);
-      }
+      },
+
     },
 
     methods: {
@@ -80,8 +108,31 @@
           }
         }
 
+        //una vez agrupadas, le inserto el precioVenta a cada una
+        for (let i = 0; i < criptomonedasAgrupadas.length; i++) {
+          console.log(criptomonedasAgrupadas[i].push("paolo" + i));
+        }
+
         return criptomonedasAgrupadas;
-      }
+      },
+
+      async obtenerPreciosVentaCriptomonedas() {
+        try {
+          
+          for (const endpoint of this.endpointsPrecios) {
+            let response = await criptoYaConnectionService.get(endpoint);
+            //console.log(response.data);
+            this.preciosVentaCriptomonedas.push(response.data.totalBid) 
+          }
+          //console.log(this.preciosVentaCriptomonedas);
+          return this.preciosVentaCriptomonedas;
+        } catch (error) {
+          console.error('Error al obtener los precios de las criptomonedas:', error);
+          return [];
+        }
+      },
+
+      
     },
 
   }

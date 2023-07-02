@@ -8,9 +8,12 @@
     </nav>
 
     <h2>Panel de Criptomonedas</h2>
-    <button @click="obtenerPrecios()" class="botonCerrarSesion">Obtener Precios hoy</button>
 
-    <div class="tablaPreciosCriptomonedas">
+    <div v-if="preciosCriptomonedas.length === 0">
+      <h1>Cargando...</h1>
+    </div>
+
+    <div v-else class="tablaPreciosCriptomonedas">
       <table>
         <thead>
           <tr>
@@ -166,6 +169,10 @@
       if (usuarioId) {
         this.esLoguedo = true;
       }
+    },
+
+    created(){
+      this.obtenerPrecios()
     }
   }
   
