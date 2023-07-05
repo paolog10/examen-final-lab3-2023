@@ -33,15 +33,8 @@
     </li>
   </ul>
   <button type="button" @click="obtenerPreciosVentaCriptomonedas">PreciosVentaCriptomonedas</button>
-
-  <div>
-    <h2>Precios de Criptomonedas</h2>
-    <ul>
-      <li v-for="item in criptomonedas" :key="item.nombre">
-        {{ item.nombre }} - Precio de venta: {{ item.precioVenta }}
-      </li>
-    </ul>
-  </div>
+  <button type="button" @click="agregarNombreCriptomoneda">Agregar propiedad nombreCriptomoneda</button>
+  <button type="button" @click="recorrerArrayPrecios">multplicarPrecioPorCantidad</button>
 </template>
 
 <script>
@@ -62,6 +55,7 @@
         ],
         preciosVentaCriptomonedas: [],
         cryptoArrayPosicion: { "btc": 0, "eth": 1, "usdt": 2, "dai": 3 },
+        preciosVentaConNombres: [],
       }
     },
 
@@ -69,7 +63,7 @@
       this.obtenerCriptomonedas()
     },
 
-    computed: { //Cómo mostrar datos agrupados?????
+    computed: { 
       mostrarCriptomonedasAgrupadas() {
         return this.agruparCriptomonedas(this.criptomonedas);
       },
@@ -108,11 +102,6 @@
           }
         }
 
-        //una vez agrupadas, le inserto el precioVenta a cada una
-        for (let i = 0; i < criptomonedasAgrupadas.length; i++) {
-          console.log(criptomonedasAgrupadas[i].push("paolo" + i));
-        }
-
         return criptomonedasAgrupadas;
       },
 
@@ -124,7 +113,8 @@
             //console.log(response.data);
             this.preciosVentaCriptomonedas.push(response.data.totalBid) 
           }
-          //console.log(this.preciosVentaCriptomonedas);
+
+          console.log(this.preciosVentaCriptomonedas);
           return this.preciosVentaCriptomonedas;
         } catch (error) {
           console.error('Error al obtener los precios de las criptomonedas:', error);
@@ -132,7 +122,42 @@
         }
       },
 
-      
+      agregarNombreCriptomoneda(){
+        //quiero agregar la propiedad nombreCriptomoneda sabiendo la posicion de cada cripto
+        const criptomonedas = Object.keys(this.cryptoArrayPosicion);
+        this.preciosVentaConNombres = this.preciosVentaCriptomonedas.map((precio, index) => {
+          const nombreCriptomoneda = criptomonedas[index];
+          return { nombreCriptomoneda, precioVenta: precio };
+        });
+
+          console.log(this.preciosVentaConNombres);
+          return this.preciosVentaConNombres;
+      },
+
+      /*Con el array obtenido en el método de agrupamiento, recorrerlo y fijarse si tengo el valor del precio de la criptomoneda
+      en el array obtenido al insertarle la propiedad nombreCriptomoneda*/
+      recorrerArrayPrecios(){
+        for (const criptomoneda of this.criptomonedasAgrupadas) {
+          const nombreCriptomoneda = criptomoneda.name;
+          
+          // Buscar el objeto correspondiente en "preciosVentaConNombres"
+          const precioVenta = this.preciosVentaConNombres.find(precio => precio.nombreCriptomoneda === nombreCriptomoneda);
+          
+          if (precioVenta) {
+            const cantidad = criptomoneda.amount;
+            const precio = precioVenta.precioVenta;
+            
+            const cantidadTotal = cantidad * precio;
+            
+            // Agregar la propiedad "cantidadTotal" al objeto en "criptomonedasAgrupadas"
+            criptomoneda.cantidadTotal = cantidadTotal;
+          }
+        }
+
+        // Mostrar los resultados
+        console.log(this.criptomonedasAgrupadas);
+      },
+
     },
 
   }
