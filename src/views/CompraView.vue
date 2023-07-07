@@ -61,6 +61,35 @@
 
     <!--<p v-show="numeroValido" class="notaAlPie">Error, verifique! Si desea comprar porción de criptomoneda utilice Ej: 10.05</p>-->
   </div>
+
+  <hr>
+
+  <h3>Formulario de Venta - Fijate antes cuanto tenes de criptomoneda para vender</h3>
+  <div class="formularioCompra">
+    <form @submit.prevent="registrarVenta">
+      <div>
+        <label>Cantidad:</label>
+        <input type="text" id="cantidad" v-model.number="cantidadVentaCriptomoneda" required>
+      </div>
+
+      <div>
+        <label>Criptomoneda:</label>
+        <select id="criptomoneda" required v-model="criptomonedaSeleccionadaVenta">
+          <option disabled selected>Selecciona criptomoneda</option>
+          <option value="btc">Bitcoin</option>
+          <option value="eth">Ethereum</option>
+          <option value="usdt">USDT</option>
+          <option value="dai">Dai</option>
+        </select>
+      </div>
+
+      <button type="submit" class="botonCompra">Venta</button>
+      <p v-if="ventaExitosa" class="exito">Venta con éxito.</p>
+    </form>
+
+    <!--<p v-show="numeroValido" class="notaAlPie">Error, verifique! Si desea comprar porción de criptomoneda utilice Ej: 10.05</p>-->
+  </div>
+
 </template>
 
 <script>
@@ -72,7 +101,7 @@
     data(){
       return{
         esLoguedo: false,
-        clienteId: null, //localStorage.getItem('idUsuario'), //inicializo el idUsuario del localStorage
+        clienteId: localStorage.getItem('idUsuario'), //inicializo el idUsuario del localStorage
         iconosCriptomonedas: [
           "https://argenbtc.com/img/iconos/f_bitcoin.svg",
           "https://argenbtc.com/img/iconos/f_ethereum.svg",
@@ -88,8 +117,11 @@
         cryptoArrayPosicion: { "btc": 0, "eth": 1, "usdt": 2, "dai": 3 },
         preciosCriptomonedas: [],
         cantidadCompraCriptomoneda: null,
+        cantidadVentaCriptomoneda: null,
         criptomonedaSeleccionada: "",
+        criptomonedaSeleccionadaVenta: "",
         compraExitosa: false,
+        ventaExitosa: false,
       }
     },
 
@@ -150,6 +182,39 @@
           console.error('Error al obtener los datos de la API:', error);
         }        
       },
+
+      parseoCantidadVentaCriptomoneda(valor){
+        if (/^\d*\.?\d+$/.test(this.cantidadVentaCriptomoneda)) {
+          // Convertir el número a decimal si pasa el test de convertir string en numero
+          this.cantidadVentaCriptomoneda = parseFloat(valor)
+          return this.cantidadVentaCriptomoneda
+        }
+        
+        return console.log('Error')
+      },
+
+      async registrarVenta(){
+        
+        let ventaCriptomoneda = {
+          user_id: this.clienteId,
+          action: "sale",
+          crypto_code: this.criptomonedaSeleccionadaVenta,
+          crypto_amount: this.parseoCantidadVentaCriptomoneda(this.cantidadVentaCriptomoneda),
+          //money: precio de compra * cantidad
+          money: (this.preciosCriptomonedas[this.cryptoArrayPosicion[this.criptomonedaSeleccionadaVenta]].bid * this.parseoCantidadVentaCriptomoneda(this.cantidadVentaCriptomoneda)).toFixed(2),
+          datetime: new Date().toISOString() //formato iso
+        }
+        console.log(ventaCriptomoneda);
+        
+        try {
+          let response = await utnConnectionService.post('https://laboratorio3-f36a.restdb.io/rest/transactions', ventaCriptomoneda)
+          console.log(response)
+          this.ventaExitosa = true
+        } catch (error) {
+          console.error('Error al obtener los datos de la API:', error);
+        }        
+      },
+
 
     },
 

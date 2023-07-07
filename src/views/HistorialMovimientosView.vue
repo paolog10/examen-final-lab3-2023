@@ -27,8 +27,8 @@
           <td>{{ compra.action }}</td>
           <td>{{ compra.datetime.replace("T", " ") }}</td>
           <td>
-            <button @click="leerFila(compra._id)" class="botonCerrarSesion">Leer</button><br>
-            <button class="botonEditarCompraVenta">Editar</button><br>
+            <button @click="leerFila(compra._id)" class="botonCerrarSesion">Leer</button><br><br>
+            <button class="botonEditarCompraVenta">Editar</button><br><br>
             <button @click="eliminarFila(compra._id)" class="botonEliminarCompraVenta">Eliminar</button>
           </td>
         </tr>
@@ -46,13 +46,21 @@
       <li>Precio Pagado: {{ this.lecturaCompraVentaCriptoMoneda.money }}</li>
     </ul>
   </div>
-  
+
+  <hr>
+
+  <formulario-edicion><button @click="editTransaction">Editar Transacción</button></formulario-edicion>
 </template>
 
 <script>
   import utnConnectionService from '../services/utnConnectionService';
+  import formularioEdicion from '../components/formularioEdicion.vue'
 
   export default {
+    components: {
+      formularioEdicion,
+    },
+
     data() {
       return {
         clienteId: localStorage.getItem('idUsuario'), //inicializo el idUsuario del localStorage

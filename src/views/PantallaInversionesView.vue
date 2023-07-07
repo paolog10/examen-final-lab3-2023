@@ -93,12 +93,19 @@
           //Asignamos en una variable, la propiedad del objeto
           const name = crypto.crypto_code
           const amount = crypto.crypto_amount
+          const action = crypto.action
 
           // Comprobar si la criptomoneda ya está agrupada
           if (criptomonedasAgrupadas[name]) {
-            criptomonedasAgrupadas[name] += amount; // Sumar la cantidad a la criptomoneda existente
+            // Verificar el tipo de acción y sumar o restar la cantidad correspondiente
+            if (action === 'purchase') {
+              criptomonedasAgrupadas[name] += amount; // Sumar la cantidad a la criptomoneda existente
+            } else if (action === 'sale') {
+              criptomonedasAgrupadas[name] -= amount; // Restar la cantidad a la criptomoneda existente
+            }
           } else {
-            criptomonedasAgrupadas[name] = amount; // Agregar la criptomoneda con su cantidad
+            // Agregar la criptomoneda con su cantidad inicial
+            criptomonedasAgrupadas[name] = amount;
           }
         }
 
