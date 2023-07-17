@@ -2,7 +2,7 @@
   <nav>
     <!--<router-link to="/">Home</router-link> |-->
     <!--<router-link to="/about">About</router-link> |-->
-    <router-link to="/login">Login</router-link> |
+    <router-link to="/">Login</router-link> |
     <router-link to="/compra">Compra-Venta</router-link> |
     <router-link to="/historialMovimientos">Historial de Movimientos</router-link> |
     <router-link to="/pantallaInversiones">Pantalla Inversiones</router-link>
@@ -10,7 +10,7 @@
   <router-view/>
 </template>
 
-<style>
+<style scoped>
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -20,7 +20,13 @@
 }
 
 nav {
-  padding: 30px;
+  display: flex;
+  width: 100vw;
+  height: 50px;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
 }
 
 nav a {

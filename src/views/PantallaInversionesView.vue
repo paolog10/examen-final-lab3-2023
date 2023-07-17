@@ -14,14 +14,14 @@
         <tr>
           <th>Criptomoneda</th>
           <th>Cantidad</th>
-          <th>Dinero</th>
+          <th>Dinero $ARS</th>
         </tr>
       </thead>
       <tbody>
         <tr v-for="(criptomoneda, cantidad ) in mostrarCriptomonedasAgrupadas" :key="criptomoneda">
-          <td>{{ criptomoneda }}</td>
           <td>{{ cantidad }}</td>      
-          <td>{{ criptomoneda }}</td>    
+          <td>{{ criptomoneda < 0 ? 0 : criptomoneda }}</td> <!--los tengo al revés-->
+          <td></td>    
         </tr>
       </tbody>
     </table>
@@ -36,6 +36,15 @@
   <button type="button" @click="agregarNombreCriptomoneda">Agregar propiedad nombreCriptomoneda</button>
   <button type="button" @click="recorrerArrayPrecios">multplicarPrecioPorCantidad</button>
 </template>
+
+<script setup>
+import router from '@/router';
+import { onBeforeMount } from 'vue';
+
+onBeforeMount( () => {
+  if (!localStorage.getItem("idUsuario")) router.push("/");  
+});
+</script>
 
 <script>
   import utnConnectionService from '../services/utnConnectionService';
@@ -143,8 +152,8 @@
 
       /*Con el array obtenido en el método de agrupamiento, recorrerlo y fijarse si tengo el valor del precio de la criptomoneda
       en el array obtenido al insertarle la propiedad nombreCriptomoneda*/
-      recorrerArrayPrecios(){
-        for (const criptomoneda of this.criptomonedasAgrupadas) {
+      recorrerArrayPrecios(criptomonedasAgrupadas){
+        for (const criptomoneda of criptomonedasAgrupadas) {
           const nombreCriptomoneda = criptomoneda.name;
           
           // Buscar el objeto correspondiente en "preciosVentaConNombres"

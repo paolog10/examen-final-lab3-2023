@@ -66,7 +66,8 @@
   align-items: center;
   justify-content: center; /*alinea al centro ambos ejes*/
   background-color: none;
-  background-image: url("../assets/bitcoin-sobre-fondo-blanco-y-negro-comercio-de-criptodivi.jpg"); 
+  background-image: url("../assets/fondo.jpg");
+  background-size: auto; 
 }
 
 .formulario {

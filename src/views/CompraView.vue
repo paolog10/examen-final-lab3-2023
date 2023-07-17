@@ -7,7 +7,9 @@
       <button @click="cerrarSesion" class="botonCerrarSesion">Cerrar sesión</button>
     </nav>
 
-    <h2>Panel de Criptomonedas</h2>
+    <div class="titulo">
+      <h2>Panel de Criptomonedas</h2>
+    </div>
 
     <div v-if="preciosCriptomonedas.length === 0">
       <h1>Cargando...</h1>
@@ -91,6 +93,7 @@
   </div>
 
 </template>
+
 
 <script>
   import criptoYaConnectionService from '../services/criptoYaConnectionService';
@@ -371,5 +374,11 @@ p {
   border: 1px solid #ccc;
   padding: 20px;
   margin-bottom: 20px;
+}
+
+.titulo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 </style>

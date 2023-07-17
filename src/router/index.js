@@ -1,16 +1,11 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
 import LoginView from '../views/LoginView.vue'
 import CompraView from '../views/CompraView.vue'
 import HistorialMovimientosView from '../views/HistorialMovimientosView.vue'
 import PantallaInversionesView from '../views/PantallaInversionesView.vue'
+import formularioEdicion from '../components/formularioEdicion.vue'
 
 const routes = [
-  {
-    path: '/',
-    name: 'home',
-    component: HomeView
-  },
   {
     path: '/about',
     name: 'about',
@@ -19,9 +14,8 @@ const routes = [
     // which is lazy-loaded when the route is visited.
     component: () => import(/* webpackChunkName: "about" */ '../views/AboutView.vue')
   },
-
   {
-    path: '/login',
+    path: '/',
     name: 'LoginView',
     component: LoginView
   },
@@ -40,6 +34,18 @@ const routes = [
     name: 'PantallaInversionesView',
     component: PantallaInversionesView
   },
+  {
+    path: '/compra/:id',
+    name: 'formularioEdicion',
+    props: true,
+    component: formularioEdicion
+  },
+  { // Redireccion para rutas no definidas.
+    path: "/:subPath*",
+    redirect: {
+      name: "LoginView"
+    }
+  }
 ]
 
 const router = createRouter({
