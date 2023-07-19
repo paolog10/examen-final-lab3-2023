@@ -4,6 +4,7 @@ import CompraView from '../views/CompraView.vue'
 import HistorialMovimientosView from '../views/HistorialMovimientosView.vue'
 import PantallaInversionesView from '../views/PantallaInversionesView.vue'
 import formularioEdicion from '../components/formularioEdicion.vue'
+import PantallaAnalisisInversionesView from '../views/PantallaAnalisisInversionesView.vue'
 
 const routes = [
   {
@@ -39,6 +40,11 @@ const routes = [
     name: 'formularioEdicion',
     props: true,
     component: formularioEdicion
+  },
+  {
+    path: '/analisisInversiones',
+    name: 'PantallaAnalisisInversionesView',
+    component: PantallaAnalisisInversionesView
   },
   { // Redireccion para rutas no definidas.
     path: "/:subPath*",

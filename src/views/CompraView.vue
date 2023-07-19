@@ -130,6 +130,7 @@
 
     methods: {
       cerrarSesion() {
+        console.log("CERRAR SESION")
         localStorage.removeItem('idUsuario')
         this.esLoguedo = false;
         
@@ -178,7 +179,7 @@
         console.log(compraCriptomoneda);
         //lo envío a la bd con la ruta y el objeto creado
         try {
-          let response = await utnConnectionService.post('https://laboratorio3-f36a.restdb.io/rest/transactions', compraCriptomoneda)
+          let response = await utnConnectionService.post('transactions', compraCriptomoneda)
           console.log(response)
           this.compraExitosa = true
         } catch (error) {
@@ -210,7 +211,7 @@
         console.log(ventaCriptomoneda);
         
         try {
-          let response = await utnConnectionService.post('https://laboratorio3-f36a.restdb.io/rest/transactions', ventaCriptomoneda)
+          let response = await utnConnectionService.post('transactions', ventaCriptomoneda)
           console.log(response)
           this.ventaExitosa = true
         } catch (error) {
@@ -264,6 +265,8 @@
   padding: 5px 10px;
   border-radius: 5px;
   cursor: pointer;
+  z-index: 100;
+  margin-top: 50px;
 }
 
 .tablaPreciosCriptomonedas{

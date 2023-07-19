@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <h3 class="h3-title">Historial de Movimientos de: {{ this.clienteId }}</h3>
+  <div class="tituloHistorial">
+    <h3 >Historial de Movimientos de: {{ this.clienteId }}</h3>
   </div>
   
   <div v-if="this.criptomonedasCompradas.length === 0">
@@ -41,7 +41,7 @@
 
   <!--:datosFormularioEdicion="datosFormularioEdicion" enlazamos datos datos desde el componente padre al componente hijo-->
   <!--escucho el evento hijo @edicionGuardada - escuchar eventos y ejecutar métodos desde el hijo al padre-->
-  <formulario-edicion v-if="datosFormularioEdicion.edicionExitosa" :datosFormularioEdicion="datosFormularioEdicion" @edicionGuardada="actualizarListaCriptomonedas"/>
+  <formulario-edicion v-if="datosFormularioEdicion.edicion" :datosFormularioEdicion="datosFormularioEdicion" @edicionGuardada="actualizarListaCriptomonedas"/>
 
 </template>
 
@@ -74,7 +74,7 @@ onBeforeMount( () => {
           crypto_code: "",
           crypto_amount: "",
           money: "",
-          edicionExitosa: false
+          edicion: false
         }
       }
     },
@@ -123,22 +123,24 @@ onBeforeMount( () => {
 
       
       editarFila(id, crypto_code, crypto_amount, money){
-        if (this.datosFormularioEdicion.edicionExitosa && this.datosFormularioEdicion.id == id) {
-          this.datosFormularioEdicion.edicionExitosa = false;
+        if (this.datosFormularioEdicion.edicion && this.datosFormularioEdicion.id == id) {
+          this.datosFormularioEdicion.edicion = false;
           return;
         }
         this.datosFormularioEdicion.crypto_amount = crypto_amount;
         this.datosFormularioEdicion.crypto_code = crypto_code;
         this.datosFormularioEdicion.money = money;
         this.datosFormularioEdicion.id = id;
-        this.datosFormularioEdicion.edicionExitosa = true;
+        this.datosFormularioEdicion.edicion = true;
       },
 
       actualizarListaCriptomonedas() {
         //obtengo nueva lista de compra/venta
         this.obtenerMovimientosCriptomonedas()
+        .then(() => {
+          this.datosFormularioEdicion.edicion = false;
+        })
       },
-
     },
 
   }
@@ -146,12 +148,13 @@ onBeforeMount( () => {
 
 <style scoped>
 
-.h3-title {
+.tituloHistorial {
   display: flex;
   justify-content: start;
   align-items: center;
   height: 50px;
 }
+
 .tablaPreciosCriptomonedas{
   max-width: 600px;
   margin: 0 auto;

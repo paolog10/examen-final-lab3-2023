@@ -25,7 +25,7 @@
           </select>
         </div>
 
-        <button type="submit" class="botonCompra">Editar</button>
+      <button type="submit" class="botonCompra">Editar</button>
         <p v-if="edicionExitosa" class="exito">Edición Exitosa!</p>
       </form>
 
@@ -46,7 +46,7 @@
       datosFormularioEdicion: {
         type: Object,
         required: true,
-      },
+      }
     },
 
     data() {

@@ -2,14 +2,14 @@
   <div>
     <h3>Inversiones de: {{ this.clienteId }}</h3>
   </div>
-
+  
   <div v-if="mostrarCriptomonedasAgrupadas.length === 0">
     <h1>Cargando...</h1>
   </div>
   <!--<button @click="agruparCriptomonedas(this.criptomonedas)">Mostrar agrupados</button>-->
 
   <div v-else>
-    <table>
+    <table class="tablaPreciosCriptomonedas">
       <thead>
         <tr>
           <th>Criptomoneda</th>
@@ -18,23 +18,21 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(criptomoneda, cantidad ) in mostrarCriptomonedasAgrupadas" :key="criptomoneda">
-          <td>{{ cantidad }}</td>      
-          <td>{{ criptomoneda < 0 ? 0 : criptomoneda }}</td> <!--los tengo al revés-->
-          <td></td>    
+        <tr v-for="crypto of preciosVentaConNombres" :key="crypto" >
+          <td v-if="crypto.cantidad? true : false">{{ crypto.nombreCriptomoneda }}</td>      
+          <td v-if="crypto.cantidad? true : false">{{ crypto.cantidad }}</td> <!--los tengo al revés-->
+          <td v-if="crypto.cantidad? true : false">${{ crypto.total? crypto.total.toFixed(2) : "Sin registro" }}</td>    
         </tr>
       </tbody>
+      <tfoot v-if="this.criptoTotal > 0">
+        <tr>
+          <td>TOTAL</td>
+          <td></td>
+          <td>${{ this.criptoTotal }}</td>
+        </tr>
+      </tfoot>
     </table>
   </div>
-
-  <ul v-for="(criptomoneda, precioVenta ) in preciosVentaCriptomonedas" :key="criptomoneda">
-    <li>
-      {{ criptomoneda }}: {{ precioVenta }} 
-    </li>
-  </ul>
-  <button type="button" @click="obtenerPreciosVentaCriptomonedas">PreciosVentaCriptomonedas</button>
-  <button type="button" @click="agregarNombreCriptomoneda">Agregar propiedad nombreCriptomoneda</button>
-  <button type="button" @click="recorrerArrayPrecios">multplicarPrecioPorCantidad</button>
 </template>
 
 <script setup>
@@ -62,9 +60,11 @@ onBeforeMount( () => {
           "/usdt/ars/1", 
           "/dai/ars/1"
         ],
+        cryptoArrayPosicion: ["btc", "eth", "usdt", "dai" ],
         preciosVentaCriptomonedas: [],
-        cryptoArrayPosicion: { "btc": 0, "eth": 1, "usdt": 2, "dai": 3 },
         preciosVentaConNombres: [],
+        criptomonedasAgrupadas: {},
+        criptoTotal: 0
       }
     },
 
@@ -74,7 +74,8 @@ onBeforeMount( () => {
 
     computed: { 
       mostrarCriptomonedasAgrupadas() {
-        return this.agruparCriptomonedas(this.criptomonedas);
+        this.criptomonedasAgrupadas = this.agruparCriptomonedas(this.criptomonedas);
+        return this.criptomonedasAgrupadas;
       },
 
     },
@@ -85,7 +86,7 @@ onBeforeMount( () => {
           const response = await utnConnectionService.get(`transactions?q={"user_id":"${this.clienteId}"}`); 
           this.criptomonedas = response.data;
 
-          //console.log(this.criptomonedas);
+          return this.obtenerPreciosVentaCriptomonedas();
         } catch (error) {
           console.error('Error al obtener datos:', error);
         }
@@ -130,48 +131,49 @@ onBeforeMount( () => {
             this.preciosVentaCriptomonedas.push(response.data.totalBid) 
           }
 
-          console.log(this.preciosVentaCriptomonedas);
-          return this.preciosVentaCriptomonedas;
+          return this.agregarNombreCriptomoneda();
         } catch (error) {
           console.error('Error al obtener los precios de las criptomonedas:', error);
-          return [];
         }
       },
 
       agregarNombreCriptomoneda(){
         //quiero agregar la propiedad nombreCriptomoneda sabiendo la posicion de cada cripto
-        const criptomonedas = Object.keys(this.cryptoArrayPosicion);
         this.preciosVentaConNombres = this.preciosVentaCriptomonedas.map((precio, index) => {
-          const nombreCriptomoneda = criptomonedas[index];
+          const nombreCriptomoneda = this.cryptoArrayPosicion[index];
           return { nombreCriptomoneda, precioVenta: precio };
         });
-
-          console.log(this.preciosVentaConNombres);
-          return this.preciosVentaConNombres;
+        return this.recorrerArrayPrecios();
       },
 
       /*Con el array obtenido en el método de agrupamiento, recorrerlo y fijarse si tengo el valor del precio de la criptomoneda
       en el array obtenido al insertarle la propiedad nombreCriptomoneda*/
-      recorrerArrayPrecios(criptomonedasAgrupadas){
-        for (const criptomoneda of criptomonedasAgrupadas) {
-          const nombreCriptomoneda = criptomoneda.name;
-          
+      recorrerArrayPrecios(){
+        for (const i in this.preciosVentaConNombres) {
           // Buscar el objeto correspondiente en "preciosVentaConNombres"
-          const precioVenta = this.preciosVentaConNombres.find(precio => precio.nombreCriptomoneda === nombreCriptomoneda);
+          //const precioVenta = this.preciosVentaConNombres.find(precio => precio.nombreCriptomoneda === criptomoneda);
           
-          if (precioVenta) {
-            const cantidad = criptomoneda.amount;
-            const precio = precioVenta.precioVenta;
+          if (this.preciosVentaConNombres[i].precioVenta) {
+            let cryptoName = this.preciosVentaConNombres[i].nombreCriptomoneda;
+            const cantidad = this.criptomonedasAgrupadas[cryptoName];
+            const precio = this.preciosVentaConNombres[i].precioVenta;
             
             const cantidadTotal = cantidad * precio;
             
             // Agregar la propiedad "cantidadTotal" al objeto en "criptomonedasAgrupadas"
-            criptomoneda.cantidadTotal = cantidadTotal;
+            //this.criptomonedasAgrupadas[criptomoneda].cantidadTotal = cantidadTotal;
+            this.preciosVentaConNombres[i] = {
+              nombreCriptomoneda: this.preciosVentaConNombres[i].nombreCriptomoneda,
+              precioVenta: this.preciosVentaConNombres[i].precioVenta,
+              cantidad: cantidad,
+              total: cantidadTotal
+            }
+            this.criptoTotal += cantidadTotal? cantidadTotal : 0;
           }
         }
 
         // Mostrar los resultados
-        console.log(this.criptomonedasAgrupadas);
+        console.log(this.preciosVentaConNombres);
       },
 
     },
@@ -179,3 +181,40 @@ onBeforeMount( () => {
   }
 
 </script>
+
+<style>
+.tablaPreciosCriptomonedas{
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+table {
+  font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
+  font-size: 12px;
+  margin: 45px;
+  width: 480px;
+  text-align: center;
+  border-collapse: collapse;
+}
+
+th {
+  font-size: 13px;
+  font-weight: normal;
+  padding: 8px;
+  background: #4caf50;
+  border-top: 4px solid #77b87f;
+  border-bottom: 1px solid #fff;
+}
+
+td {
+  padding: 8px;
+  background: #e4f0df;
+  border-bottom: 1px solid #fff;
+  border-top: 1px solid transparent;
+}
+
+tr:hover td {
+  background: #c8e4c3;
+}
+
+</style>
